@@ -1,4 +1,5 @@
 # Proyecto Final Backend 
 
 ##Integrantes del Proyecto
-* **Abner Paredes** - 2294-23-17751 
+* **Abner Paredes** - 2294-23-17751
+* * **Anelyn Laines** - 2294-23-187
