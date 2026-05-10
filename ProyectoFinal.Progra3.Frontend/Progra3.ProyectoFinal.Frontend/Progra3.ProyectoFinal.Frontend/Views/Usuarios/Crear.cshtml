@@ -1,0 +1,66 @@
+﻿@model Progra3.ProyectoFinal.Frontend.Models.Usuarios.CrearUsuario
+
+@{
+    ViewData["Title"] = "Registro de Usuario";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Registro en Xandria</h3>
+
+                    @if (TempData["MensajeExito"] != null)
+                    {
+                        <div class="alert alert-success text-center">
+                            @TempData["MensajeExito"]
+                        </div>
+                    }
+
+                    <form asp-action="Crear" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Nombres" class="form-label">Nombres</label>
+                            <input asp-for="Nombres" class="form-control" placeholder="Ej. Panfilo Belarmino" />
+                            <span asp-validation-for="Nombres" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Apellidos" class="form-label">Apellidos</label>
+                            <input asp-for="Apellidos" class="form-control" placeholder="Ej. Benjamin Pacifuentes" />
+                            <span asp-validation-for="Apellidos" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DPI" class="form-label">DPI (Opcional)</label>
+                            <input asp-for="DPI" class="form-control" placeholder="13 dígitos" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Correo Electrónico</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="correo@ejemplo.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Telefono" class="form-label">Teléfono (Opcional)</label>
+                            <input asp-for="Telefono" class="form-control" placeholder="Ej. 5555-0000" />
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Registrar Usuario</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
