@@ -18,6 +18,11 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
             return View();
         }
 
+        public IActionResult Principal()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

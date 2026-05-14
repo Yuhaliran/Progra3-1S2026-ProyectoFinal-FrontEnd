@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Progra3.ProyectoFinal.Frontend.Models.Usuarios
 {
@@ -20,5 +20,9 @@ namespace Progra3.ProyectoFinal.Frontend.Models.Usuarios
         public string Email { get; set; } = string.Empty;
 
         public string? Telefono { get; set; }
+
+        [Required(ErrorMessage = "La Contraseña es obligatoria")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
     }
 }

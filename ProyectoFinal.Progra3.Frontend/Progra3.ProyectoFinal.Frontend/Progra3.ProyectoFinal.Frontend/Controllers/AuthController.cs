@@ -37,9 +37,22 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
 
             if (respuesta.IsSuccessStatusCode)
             {
-                //aqui pondria el jwt, si tuviera uno
+                var responseContent = await respuesta.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var loginResponse = JsonSerializer.Deserialize<Progra3.ProyectoFinal.Frontend.Models.Response.Auth.LoginResponse>(responseContent, options);
 
-                return RedirectToAction("Index", "Home");
+                if (loginResponse != null && !string.IsNullOrEmpty(loginResponse.Token))
+                {
+                    Response.Cookies.Append("JwtToken", loginResponse.Token, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true, 
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTime.UtcNow.AddHours(2)
+                    });
+                }
+
+                return RedirectToAction("Principal", "Home");
             }
             else
             {

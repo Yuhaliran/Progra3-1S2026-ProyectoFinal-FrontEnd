@@ -10,6 +10,6 @@ namespace Progra3.ProyectoFinal.Frontend.Models.Usuarios
 
         [Required(ErrorMessage = "La Contraseña es obligatoria")]
         [DataType(DataType.Password)]
-        public string Contrasena { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

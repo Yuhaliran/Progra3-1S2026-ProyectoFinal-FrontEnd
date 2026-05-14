@@ -1,4 +1,4 @@
-﻿@model Progra3.ProyectoFinal.Frontend.Models.Usuarios.CrearUsuario
+@model Progra3.ProyectoFinal.Frontend.Models.Usuarios.CrearUsuario
 
 @{
     ViewData["Title"] = "Registro de Usuario";
@@ -47,6 +47,12 @@
                         <div class="mb-4">
                             <label asp-for="Telefono" class="form-label">Teléfono (Opcional)</label>
                             <input asp-for="Telefono" class="form-control" placeholder="Ej. 5555-0000" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Password" class="form-label">Contraseña</label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Ingresa tu contraseña" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
                         <div class="d-grid">

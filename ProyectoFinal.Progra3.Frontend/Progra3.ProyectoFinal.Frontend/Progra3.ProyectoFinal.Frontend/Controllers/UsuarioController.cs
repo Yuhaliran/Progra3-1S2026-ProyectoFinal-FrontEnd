@@ -1,4 +1,4 @@
-﻿namespace Progra3.ProyectoFinal.Frontend.Controllers
+namespace Progra3.ProyectoFinal.Frontend.Controllers
 {
     using System.Text;
     using System.Text.Json;
@@ -37,7 +37,7 @@
             var json = JsonSerializer.Serialize(modelo);
             var contenido = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var respuesta = await cliente.PostAsync("usuarios", contenido);
+            var respuesta = await cliente.PostAsync("usuarios/crear", contenido);
 
             if (respuesta.IsSuccessStatusCode)
             {
@@ -46,7 +46,8 @@
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Hubo un problema al guardar el usuario");
+                var errorResponse = await respuesta.Content.ReadAsStringAsync();
+                ModelState.AddModelError(string.Empty, $"Error del servidor: {errorResponse}");
                 return View(modelo);
             }
         }
