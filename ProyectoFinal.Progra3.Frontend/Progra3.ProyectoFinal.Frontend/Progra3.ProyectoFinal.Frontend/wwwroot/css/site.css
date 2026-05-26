@@ -20,3 +20,26 @@ html {
 body {
   margin-bottom: 60px;
 }
+/* Estilos de la pantalla principal */
+
+.sidebar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 100px;
+    height: 100vh;
+    background-color: #f45d5d;
+    padding-top: 30px;
+    z-index: 1000;
+}
+
+.contenido-principal {
+    margin-left: 20px;
+}
+
+@@media (max-width: 768px) {
+
+    .contenido-principal {
+        margin-left: 0;
+    }
+}
