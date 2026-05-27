@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Detalles de la Cuenta";
+}
+
+<div class="w-100 py-5 text-center text-white mb-5" style="background-color: #f45d5d;">
+    <h1 class="fw-normal">Account details</h1>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+
+        <div class="col-md-3 mb-4">
+            <div class="list-group rounded-0">
+                <a href="#" class="list-group-item list-group-item-action border-0 text-white py-2 px-3 mb-2" style="background-color: #f45d5d;">Dashboard</a>
+                <a href="#" class="list-group-item list-group-item-action border-0 text-white py-2 px-3 mb-2" style="background-color: #f45d5d;">Orders</a>
+                <a href="#" class="list-group-item list-group-item-action border-0 text-white py-2 px-3 mb-2" style="background-color: #f45d5d;">Downloads</a>
+                <a href="#" class="list-group-item list-group-item-action border-0 text-white py-2 px-3 mb-2" style="background-color: #f45d5d;">Addresses</a>
+                <a href="#" class="list-group-item list-group-item-action border-0 text-white py-2 px-3 mb-2 fw-bold" style="background-color: #d14949;">Account details</a>
+                <a href="#" class="list-group-item list-group-item-action border-0 text-white py-2 px-3" style="background-color: #f45d5d;">Log out</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <form method="post" action="#">
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-semibold">First name *</label>
+                        <input type="text" class="form-control rounded-0 py-2" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-semibold">Last name *</label>
+                        <input type="text" class="form-control rounded-0 py-2" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-semibold">Display name *</label>
+                    <input type="text" class="form-control rounded-0 py-2" required />
+                    <span class="form-text text-muted fst-italic small">This will be how your name will be displayed in the account section and in reviews</span>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label text-muted small fw-semibold">Email address *</label>
+                    <input type="email" class="form-control rounded-0 py-2" required />
+                </div>
+
+                <fieldset class="border p-4 mb-4">
+                    <legend class="float-none w-auto h6 px-2 text-muted fw-bold text-uppercase">Password change</legend>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Current password (leave blank to leave unchanged)</label>
+                        <input type="password" class="form-control rounded-0 py-2" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">New password (leave blank to leave unchanged)</label>
+                        <input type="password" class="form-control rounded-0 py-2" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Confirm new password</label>
+                        <input type="password" class="form-control rounded-0 py-2" />
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn rounded-0 text-uppercase fw-bold px-4 py-2 text-danger border-danger bg-white" style="border: 2px solid;">
+                    Save Changes
+                </button>
+
+            </form>
+        </div>
+
+    </div>
+</div>
