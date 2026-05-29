@@ -1,15 +1,12 @@
+@model Progra3.ProyectoFinal.Frontend.Util.ListaCircularDoble<Progra3.ProyectoFinal.Frontend.Models.Response.Libros.LibroResponse>
+
 @{
     ViewData["Title"] = "Principal";
+    var libros = Model?.ObtenerListaCompleta() ?? new List<Progra3.ProyectoFinal.Frontend.Models.Response.Libros.LibroResponse>();
 }
 
-@* <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="text-center">
-        <h1 class="display-4">Hola mundo</h1>
-    </div>
-</div> *@
-
 <div class="sidebar d-none d-md-flex flex-column align-items-center">
-    <button class="btn btn-light mb-4">
+    <button id="sidebar-toggle" class="btn btn-light" title="Menú">
         ☰
     </button>
 
@@ -20,26 +17,82 @@
     <a href="#" class="text-white mb-4 text-decoration-none">
         Mi Cuenta
     </a>
+
+    <button id="theme-toggle" class="btn btn-light" title="Cambiar Tema">
+        🌙
+    </button>
 </div>
 
 <div class="container my-5 contenido-principal">
-    <div class="row">
-        <div class="col-md-6">
-            <span class="text-danger">Bienvenido al sitio web Xandria</span>
-
-            <h1 class="display-4 fw-bold">Libreria Xandria Guatemala.......</h1>
-
-            <p>
-                Los libros que estaba buscando pueden estar a un clic de distancia.
-                En la tienda en línea de Xandria encuentra una selección de títulos para todos los gustos y todos los momentos;
-                desde la novela que lleva tiempo queriendo leer, hasta el regalo perfecto para alguien especial. Puede explorar,
-                descubrir y hacer su pedido desde donde esté.
-            </p>
-
-            <a href="#" class="btn btn-danger btn-lg">Ver Mas</a>
+    @if (libros.Count == 0)
+    {
+        <div class="text-center py-5 card shadow-sm p-5 border-0 rounded-4" style="background-color: var(--fondo-secundario);">
+            <h2 class="display-6 fw-bold text-danger">Bienvenido a Xandria</h2>
+            <p class="lead my-3 text-muted">No hay libros registrados en el sistema en este momento.</p>
+            <div class="my-4">
+                <span style="font-size: 5rem; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.25));">📚</span>
+            </div>
+            <p class="text-secondary max-width-500 mx-auto">Por favor, registra algunos libros en el panel de administración para comenzar a disfrutar de la lectura.</p>
         </div>
-        <div class="col-md-6">
-            <img src="~/images/Home-book.webp" class="img-fluid rounded shadow">
+    }
+    else
+    {
+        <div class="carrusel-contenedor">
+            <span class="carrusel-subtitulo">Colección Recomendada</span>
+            <h1 class="carrusel-titulo">Explora Nuestras Obras</h1>
+            
+            <div class="carrusel-vista mt-4">
+                <button class="carrusel-control anterior" id="btn-carrusel-prev" title="Anterior">
+                    &lt;
+                </button>
+                
+                <div class="carrusel-lista" id="carrusel-lista-libros">
+                    @for (int i = 0; i < libros.Count; i++)
+                    {
+                        var libro = libros[i];
+                        var imageSrc = "";
+                        if (!string.IsNullOrEmpty(libro.Portada))
+                        {
+                            if (libro.Portada.StartsWith("http") || libro.Portada.StartsWith("/") || libro.Portada.StartsWith("~"))
+                            {
+                                imageSrc = libro.Portada;
+                            }
+                            else if (libro.Portada.Contains("base64,"))
+                            {
+                                imageSrc = libro.Portada;
+                            }
+                            else
+                            {
+                                imageSrc = "data:image/jpeg;base64," + libro.Portada;
+                            }
+                        }
+                        else
+                        {
+                            imageSrc = "/images/Home-book.webp";
+                        }
+
+                        <div class="libro-item" 
+                             data-index="@i"
+                             data-titulo="@libro.Titulo"
+                             data-autor="@libro.Autor"
+                             data-isbn="@libro.ISBN"
+                             onclick="window.location.href='@Url.Action("DetallesLibro", "Home", new { isbn = libro.ISBN })'"
+                             style="cursor: pointer;">
+                            <img src="@imageSrc" alt="@libro.Titulo" onerror="this.src='/images/Home-book.webp';">
+                        </div>
+                    }
+                </div>
+                
+                <button class="carrusel-control siguiente" id="btn-carrusel-next" title="Siguiente">
+                    &gt;
+                </button>
+            </div>
+            
+            <div class="libro-info-panel">
+                <div class="libro-info-titulo" id="carrusel-info-titulo"></div>
+                <div class="libro-info-autor" id="carrusel-info-autor"></div>
+                <div class="libro-info-isbn" id="carrusel-info-isbn"></div>
+            </div>
         </div>
-    </div>
+    }
 </div>

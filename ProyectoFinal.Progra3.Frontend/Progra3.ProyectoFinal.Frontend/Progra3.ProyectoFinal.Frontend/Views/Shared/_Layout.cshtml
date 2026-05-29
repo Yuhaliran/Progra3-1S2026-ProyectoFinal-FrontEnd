@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,6 +9,18 @@
     <link rel="stylesheet" href="~/Progra3.ProyectoFinal.Frontend.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <script>
+        (function () {
+            const temaGuardado = localStorage.getItem('tema') || 'oscuro';
+            if (temaGuardado === 'claro') {
+                document.body.classList.add('tema-claro');
+            }
+            const colapsadoGuardado = localStorage.getItem('sidebar-collapsed');
+            if (colapsadoGuardado === 'true') {
+                document.body.classList.add('sidebar-collapsed');
+            }
+        })();
+    </script>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
