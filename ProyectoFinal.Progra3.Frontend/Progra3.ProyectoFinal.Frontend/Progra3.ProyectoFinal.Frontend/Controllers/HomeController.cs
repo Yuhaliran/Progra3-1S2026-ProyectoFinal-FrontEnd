@@ -138,7 +138,107 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
 
             var respuesta = await cliente.PostAsync("ColaLectura", contenido);
 
+            if (respuesta.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Bitácora actualizada satisfactoriamente.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Hubo un error al guardar en la bitácora.";
+            }
+
             return RedirectToAction(nameof(DetallesLibro), new { isbn = request.ISBN });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Buscar(string query)
+        {
+            if (string.IsNullOrEmpty(query))
+            {
+                return RedirectToAction(nameof(Principal));
+            }
+
+            var resultados = new List<LibroResponse>();
+            query = query.Trim();
+
+            try
+            {
+                var cliente = _httpClientFactory.CreateClient("XandriaAPI");
+                var token = Request.Cookies["JwtToken"];
+                if (!string.IsNullOrEmpty(token))
+                {
+                    cliente.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                }
+
+                if (esISBN(query))
+                {
+                    var respuestaLocal = await cliente.GetAsync($"Libros/obtenerPorIsbn/{query}");
+                    if (respuestaLocal.IsSuccessStatusCode)
+                    {
+                        var contenido = await respuestaLocal.Content.ReadAsStringAsync();
+                        var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                        var libro = JsonSerializer.Deserialize<LibroResponse>(contenido, opciones);
+                        if (libro != null)
+                        {
+                            resultados.Add(libro);
+                        }
+                    }
+                    else
+                    {
+                        var respuestaUnificada = await cliente.GetAsync($"Libros/buscar-unificado/{query}");
+                        if (respuestaUnificada.IsSuccessStatusCode)
+                        {
+                            var contenido = await respuestaUnificada.Content.ReadAsStringAsync();
+                            var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                            var libro = JsonSerializer.Deserialize<LibroResponse>(contenido, opciones);
+                            if (libro != null)
+                            {
+                                resultados.Add(libro);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var respuestaLocal = await cliente.GetAsync($"Libros/buscar-local?query={Uri.EscapeDataString(query)}");
+                    if (respuestaLocal.IsSuccessStatusCode)
+                    {
+                        var contenido = await respuestaLocal.Content.ReadAsStringAsync();
+                        var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                        var libros = JsonSerializer.Deserialize<List<LibroResponse>>(contenido, opciones);
+                        if (libros != null)
+                        {
+                            resultados.AddRange(libros);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al realizar la búsqueda");
+            }
+
+            ViewBag.Query = query;
+            return View("ResultadosBusqueda", resultados);
+        }
+
+        private bool esISBN(string query)
+        {
+            if (string.IsNullOrEmpty(query)) return false;
+            var clean = query.Replace("-", "").Replace(" ", "").Trim();
+            if (clean.Length != 10 && clean.Length != 13) return false;
+            for (int i = 0; i < clean.Length; i++)
+            {
+                if (!char.IsDigit(clean[i]))
+                {
+                    if (clean.Length == 10 && i == 9 && (clean[i] == 'X' || clean[i] == 'x'))
+                    {
+                        continue;
+                    }
+                    return false;
+                }
+            }
+            return true;
         }
 
         public IActionResult Privacy()

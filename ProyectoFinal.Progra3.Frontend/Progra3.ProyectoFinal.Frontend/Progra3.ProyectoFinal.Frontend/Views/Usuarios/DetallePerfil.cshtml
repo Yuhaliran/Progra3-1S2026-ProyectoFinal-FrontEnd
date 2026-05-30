@@ -1,0 +1,148 @@
+@model Progra3.ProyectoFinal.Frontend.Models.Usuarios.DetallePerfilViewModel
+
+@{
+    ViewData["Title"] = "Detalle del Perfil";
+}
+
+<div class="container my-5 contenido-principal">
+    <div class="row justify-content-center">
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-lg text-center h-100 overflow-hidden" style="border-radius: 16px;">
+                <div class="py-5" style="background: linear-gradient(135deg, var(--fondo-terciario) 0%, var(--acento-principal) 100%);">
+                    <div class="mx-auto rounded-circle d-flex align-items-center justify-content-center shadow-lg border border-3 border-white-50" 
+                         style="width: 100px; height: 100px; background-color: var(--fondo-secundario); color: var(--acento-hover); font-size: 3.5rem;">
+                        👤
+                    </div>
+                </div>
+                
+                <div class="card-body px-4 pt-4 pb-5">
+                    <h4 class="font-weight-bold mb-1" style="color: var(--texto-principal);">
+                        @Model.Nombres @Model.Apellidos
+                    </h4>
+                    <p class="small text-muted mb-3" style="color: var(--texto-atenuado) !important;">
+                        @Model.Email
+                    </p>
+                    
+                    <div class="d-flex justify-content-center gap-2 mb-4">
+                        <span class="badge px-3 py-2 text-uppercase shadow-sm" 
+                              style="background-color: var(--fondo-terciario); color: var(--texto-secundario); border: 1px solid var(--color-borde); border-radius: 30px; font-weight: 600; font-size: 0.75rem;">
+                            🎭 @Model.Rol
+                        </span>
+                        
+                        <span class="badge px-3 py-2 text-uppercase shadow-sm" 
+                              style="background-color: rgba(40, 167, 69, 0.15); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.3); border-radius: 30px; font-weight: 600; font-size: 0.75rem;">
+                            🟢 @Model.Estado
+                        </span>
+                    </div>
+
+                    <div class="border-top pt-4 text-start">
+                        <h6 class="text-uppercase font-weight-bold mb-3 small" style="letter-spacing: 1px; color: var(--acento-hover);">Información de Sistema</h6>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">ID de Usuario:</span>
+                            <span class="font-weight-bold small">#@Model.IdUsuario</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">DPI Registrado:</span>
+                            <span class="font-weight-bold small">@(string.IsNullOrEmpty(Model.DPI) ? "No Registrado" : Model.DPI)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de Configuración de Perfil (Columna Derecha) -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg" style="border-radius: 16px;">
+                <div class="card-body p-4 p-md-5">
+                    <h3 class="card-title mb-1" style="color: var(--texto-principal); font-weight: 700;">Mi Perfil</h3>
+                    <p class="text-muted mb-4">Actualiza los datos personales de tu cuenta en Xandria.</p>
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success border-0 shadow-sm text-center py-3 mb-4" style="border-radius: 12px; background-color: rgba(40, 167, 69, 0.15); color: #2eb85c; font-weight: 500;">
+                            ✨ @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger border-0 shadow-sm text-center py-3 mb-4" style="border-radius: 12px; background-color: rgba(220, 53, 69, 0.15); color: var(--acento-hover); font-weight: 500;">
+                            ⚠️ @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <form asp-action="DetallePerfil" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+                        <input type="hidden" asp-for="IdUsuario" />
+                        <input type="hidden" asp-for="Rol" />
+                        <input type="hidden" asp-for="Estado" />
+
+                        <div class="row">
+                            <!-- Nombres -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Nombres" class="form-label font-weight-bold" style="color: var(--texto-secundario); font-size: 0.9rem;">Nombres</label>
+                                <input asp-for="Nombres" class="form-control py-2.5" style="border-radius: 10px;" placeholder="Tus nombres" />
+                                <span asp-validation-for="Nombres" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Apellidos -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Apellidos" class="form-label font-weight-bold" style="color: var(--texto-secundario); font-size: 0.9rem;">Apellidos</label>
+                                <input asp-for="Apellidos" class="form-control py-2.5" style="border-radius: 10px;" placeholder="Tus apellidos" />
+                                <span asp-validation-for="Apellidos" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Correo Electrónico (Solo Lectura) -->
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label font-weight-bold" style="color: var(--texto-secundario); font-size: 0.9rem;">Correo Electrónico</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-0" style="background-color: var(--fondo-principal); color: var(--texto-atenuado); border-radius: 10px 0 0 10px;">📧</span>
+                                <input asp-for="Email" class="form-control py-2.5" style="border-radius: 0 10px 10px 0; background-color: var(--fondo-principal) !important; color: var(--texto-atenuado) !important; cursor: not-allowed;" readonly />
+                            </div>
+                            <span class="form-text text-muted small" style="font-size: 0.75rem; color: var(--texto-atenuado) !important;">El correo electrónico es el identificador principal y no se puede modificar.</span>
+                        </div>
+
+                        <div class="row">
+                            <!-- Teléfono -->
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Telefono" class="form-label font-weight-bold" style="color: var(--texto-secundario); font-size: 0.9rem;">Teléfono</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-0" style="background-color: var(--fondo-terciario); color: var(--texto-secundario); border-radius: 10px 0 0 10px;">📞</span>
+                                    <input asp-for="Telefono" class="form-control py-2.5" style="border-radius: 0 10px 10px 0;" placeholder="Ej. 5555-0000" />
+                                </div>
+                                <span asp-validation-for="Telefono" class="text-danger small"></span>
+                            </div>
+
+                            <!-- DPI (Solo Lectura) -->
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="DPI" class="form-label font-weight-bold" style="color: var(--texto-secundario); font-size: 0.9rem;">DPI</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-0" style="background-color: var(--fondo-principal); color: var(--texto-atenuado); border-radius: 10px 0 0 10px;">🪪</span>
+                                    <input asp-for="DPI" class="form-control py-2.5" style="border-radius: 0 10px 10px 0; background-color: var(--fondo-principal) !important; color: var(--texto-atenuado) !important; cursor: not-allowed;" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="d-flex justify-content-end gap-3 mt-2 border-top pt-4">
+                            <a asp-controller="Home" asp-action="Principal" class="btn btn-outline-secondary px-4 py-2" 
+                               style="border-radius: 10px; font-weight: 600; border: 1px solid var(--color-borde); color: var(--texto-principal); background-color: transparent; transition: all 0.2s;">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 py-2 shadow-sm" style="border-radius: 10px; font-weight: 600;">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

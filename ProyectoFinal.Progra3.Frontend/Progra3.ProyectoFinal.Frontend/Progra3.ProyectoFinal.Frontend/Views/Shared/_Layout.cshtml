@@ -1,3 +1,9 @@
+@{
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString();
+    var actionName = ViewContext.RouteData.Values["action"]?.ToString();
+    var isLoginPage = string.Equals(controllerName, "Auth", StringComparison.OrdinalIgnoreCase) && 
+                       string.Equals(actionName, "Login", StringComparison.OrdinalIgnoreCase);
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +27,26 @@
             }
         })();
     </script>
+    @if (!isLoginPage)
+    {
+        <div class="sidebar d-none d-md-flex flex-column align-items-center">
+            <button id="sidebar-toggle" class="btn btn-light" title="Menú">
+                ☰
+            </button>
+
+            <a href="#" class="text-white mb-4 text-decoration-none">
+                Registro
+            </a>
+
+            <a asp-controller="Usuarios" asp-action="DetallePerfil" class="text-white mb-4 text-decoration-none">
+                Perfil
+            </a>
+
+            <button id="theme-toggle" class="btn btn-light" title="Cambiar Tema">
+                🌙
+            </button>
+        </div>
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">

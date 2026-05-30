@@ -5,25 +5,27 @@
     var libros = Model?.ObtenerListaCompleta() ?? new List<Progra3.ProyectoFinal.Frontend.Models.Response.Libros.LibroResponse>();
 }
 
-<div class="sidebar d-none d-md-flex flex-column align-items-center">
-    <button id="sidebar-toggle" class="btn btn-light" title="Menú">
-        ☰
-    </button>
 
-    <a href="#" class="text-white mb-4 text-decoration-none">
-        Registro
-    </a>
-
-    <a href="#" class="text-white mb-4 text-decoration-none">
-        Mi Cuenta
-    </a>
-
-    <button id="theme-toggle" class="btn btn-light" title="Cambiar Tema">
-        🌙
-    </button>
-</div>
 
 <div class="container my-5 contenido-principal">
+    
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 col-lg-6">
+            <form asp-controller="Home" asp-action="Buscar" method="get">
+                <div class="input-group shadow-lg" style="border-radius: 30px; overflow: hidden; border: 1px solid var(--color-borde);">
+                    <input type="text" name="query" class="form-control px-4 py-3 border-0 text-white" 
+                           placeholder="Buscar por Título, Autor o ISBN..." 
+                           style="background-color: var(--fondo-secundario) !important; color: var(--texto-principal) !important; font-size: 1.05rem;"
+                           required />
+                    <button type="submit" class="btn btn-primary px-4 d-flex align-items-center justify-content-center" 
+                            style="background-color: var(--acento-principal) !important; border: none; font-size: 1.25rem;">
+                        🔍
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     @if (libros.Count == 0)
     {
         <div class="text-center py-5 card shadow-sm p-5 border-0 rounded-4" style="background-color: var(--fondo-secundario);">
@@ -38,8 +40,7 @@
     else
     {
         <div class="carrusel-contenedor">
-            <span class="carrusel-subtitulo">Colección Recomendada</span>
-            <h1 class="carrusel-titulo">Explora Nuestras Obras</h1>
+            <span class="carrusel-subtitulo">Libritos </span>
             
             <div class="carrusel-vista mt-4">
                 <button class="carrusel-control anterior" id="btn-carrusel-prev" title="Anterior">
