@@ -12,5 +12,6 @@ namespace Progra3.ProyectoFinal.Frontend.Models.Response.Bitacora
         public string NombreEstado { get; set; } = string.Empty;
         public string TituloLibro { get; set; } = string.Empty;
         public string AutorLibro { get; set; } = string.Empty;
+        public DateTime FechaCreacion { get; set; }
     }
 }

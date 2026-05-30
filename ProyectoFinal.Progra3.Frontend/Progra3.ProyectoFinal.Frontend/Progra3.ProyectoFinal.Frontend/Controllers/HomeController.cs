@@ -3,6 +3,7 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Progra3.ProyectoFinal.Frontend.Models;
     using Progra3.ProyectoFinal.Frontend.Models.Response.Libros;
+    using Progra3.ProyectoFinal.Frontend.Models.Response.Bitacora;
     using Progra3.ProyectoFinal.Frontend.Util;
     using System.Diagnostics;
     using System.Text.Json;
@@ -239,6 +240,88 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
                 }
             }
             return true;
+        }
+
+        private int? GetUsuarioIdDesdeToken(string token)
+        {
+            if (string.IsNullOrEmpty(token)) return null;
+            try
+            {
+                var partes = token.Split('.');
+                if (partes.Length < 2) return null;
+                var payloadB64 = partes[1];
+                
+                int mod = payloadB64.Length % 4;
+                if (mod > 0)
+                {
+                    payloadB64 += new string('=', 4 - mod);
+                }
+                
+                var payloadBytes = Convert.FromBase64String(payloadB64);
+                var json = System.Text.Encoding.UTF8.GetString(payloadBytes);
+                var doc = System.Text.Json.JsonDocument.Parse(json);
+                if (doc.RootElement.TryGetProperty("IdUsuario", out var idProp))
+                {
+                    if (idProp.ValueKind == System.Text.Json.JsonValueKind.String && int.TryParse(idProp.GetString(), out var id))
+                    {
+                        return id;
+                    }
+                    else if (idProp.ValueKind == System.Text.Json.JsonValueKind.Number && idProp.TryGetInt32(out var idNum))
+                    {
+                        return idNum;
+                    }
+                }
+            }
+            catch
+            {
+            }
+            return null;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MiColaDeLectura()
+        {
+            var token = Request.Cookies["JwtToken"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            var idUsuario = GetUsuarioIdDesdeToken(token);
+            if (idUsuario == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            var pila = new Pila<ColaLecturaResponse>();
+
+            try
+            {
+                var cliente = _httpClientFactory.CreateClient("XandriaAPI");
+                cliente.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var respuesta = await cliente.GetAsync("ColaLectura");
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    var contenido = await respuesta.Content.ReadAsStringAsync();
+                    var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var lista = JsonSerializer.Deserialize<List<ColaLecturaResponse>>(contenido, opciones);
+
+                    if (lista != null)
+                    {
+                        foreach (var item in lista)
+                        {
+                            pila.Push(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener la cola de lectura del usuario.");
+            }
+
+            return View(pila);
         }
 
         public IActionResult Privacy()
