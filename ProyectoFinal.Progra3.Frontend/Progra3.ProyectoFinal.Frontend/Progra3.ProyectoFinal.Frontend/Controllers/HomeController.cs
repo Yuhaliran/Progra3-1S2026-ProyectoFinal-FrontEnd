@@ -324,6 +324,40 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
             return View(pila);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EliminarDeCola(string isbn)
+        {
+            var token = Request.Cookies["JwtToken"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            try
+            {
+                var cliente = _httpClientFactory.CreateClient("XandriaAPI");
+                cliente.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var respuesta = await cliente.DeleteAsync($"ColaLectura/{isbn}");
+
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Libro eliminado de tu cola de lectura.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "No se pudo eliminar el libro de tu cola de lectura.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error al eliminar el libro {isbn} de la cola de lectura.");
+                TempData["ErrorMessage"] = "Ocurrió un error al procesar tu solicitud.";
+            }
+
+            return RedirectToAction(nameof(MiColaDeLectura));
+        }
+
         public IActionResult Privacy()
         {
             return View();

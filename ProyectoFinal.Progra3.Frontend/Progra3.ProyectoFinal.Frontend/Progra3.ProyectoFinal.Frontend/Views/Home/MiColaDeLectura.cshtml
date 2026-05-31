@@ -15,7 +15,26 @@
                 Visualiza tu historial y colita de lectura.
             </p>
         </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a asp-controller="Home" asp-action="Principal" class="btn btn-primary px-4 py-2 shadow-sm" style="border-radius: 10px; font-weight: 600;">
+                Volver al Inicio
+            </a>
+        </div>
     </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success border-0 shadow-sm text-center py-3 mb-4" style="border-radius: 12px; background-color: rgba(40, 167, 69, 0.15); color: #2eb85c; font-weight: 500;">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger border-0 shadow-sm text-center py-3 mb-4" style="border-radius: 12px; background-color: rgba(220, 53, 69, 0.15); color: var(--acento-hover); font-weight: 500;">
+            @TempData["ErrorMessage"]
+        </div>
+    }
 
     @if (librosCola.Count == 0)
     {
@@ -141,11 +160,21 @@
                                 </td>
                                 
                                 <td class="px-4 py-3 text-center">
-                                    <a asp-controller="Home" asp-action="DetallesLibro" asp-route-isbn="@item.ISBN" 
-                                       class="btn btn-outline-primary btn-sm px-3 shadow-sm" 
-                                       style="border-radius: 8px; font-weight: 600; font-size: 0.8rem; border-color: var(--acento-principal); color: var(--texto-principal); background-color: transparent; transition: all 0.2s;">
-                                        Detalles
-                                    </a>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-controller="Home" asp-action="DetallesLibro" asp-route-isbn="@item.ISBN" 
+                                           class="btn btn-outline-primary btn-sm px-3 shadow-sm" 
+                                           style="border-radius: 8px; font-weight: 600; font-size: 0.8rem; border-color: var(--acento-principal); color: var(--texto-principal); background-color: transparent; transition: all 0.2s;">
+                                            Detalles
+                                        </a>
+                                        <form asp-controller="Home" asp-action="EliminarDeCola" asp-route-isbn="@item.ISBN" method="post" 
+                                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar este libro de tu cola de lectura?');" 
+                                              class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm px-3 shadow-sm" 
+                                                    style="border-radius: 8px; font-weight: 600; font-size: 0.8rem; transition: all 0.2s;">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -155,7 +184,7 @@
         </div>
 
         <div class="mt-4 d-flex align-items-center gap-3 bg-dark p-3 rounded-4 shadow-sm" style="background-color: var(--fondo-terciario) !important; border: 1px solid var(--color-borde);">
-            <span style="font-size: 1.5rem;">🥞</span>            
+            <span style="font-size: 1.5rem;">   </span>
         </div>
     }
 </div>
