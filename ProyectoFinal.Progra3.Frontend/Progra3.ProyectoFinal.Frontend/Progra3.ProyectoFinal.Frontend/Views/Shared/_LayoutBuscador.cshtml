@@ -23,6 +23,41 @@
                      style="background: rgba(31, 27, 24, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 16px; border: 1px solid var(--color-borde) !important; max-height: 380px; overflow-y: auto; z-index: 2000; position: absolute; top: 100%; left: 0;">
                 </div>
             </div>
+
+            <div class="text-center mt-3">
+                <button type="button" class="btn btn-sm btn-outline-secondary px-4 py-2" 
+                        style="border-radius: 20px; font-size: 0.85rem; border-color: var(--color-borde); color: var(--texto-principal); font-weight: 600; background: transparent; transition: all 0.2s;"
+                        onclick="alternarFiltroAnio()">
+                    Filtrar por Año de Publicación
+                </button>
+            </div>
+
+            <div id="panel-filtro-anio" class="d-none mt-3 p-4 shadow-lg" 
+                 style="background: rgba(31, 27, 24, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 16px; border: 1px solid var(--color-borde) !important;">
+                <form asp-controller="Home" asp-action="BuscarPorAnio" method="get">
+                    <h6 class="text-white mb-3" style="font-weight: 700;">Filtrar por Rango de Años:</h6>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-6">
+                            <label for="anioMin" class="form-label text-muted small">Año Mínimo:</label>
+                            <input type="number" id="anioMin" name="anioMin" class="form-control text-white border-0 px-3 py-2" 
+                                   style="background-color: var(--fondo-terciario) !important; border-radius: 8px; font-size: 0.95rem;"
+                                   min="0" max="2100" value="1900" required />
+                        </div>
+                        <div class="col-6">
+                            <label for="anioMax" class="form-label text-muted small">Año Máximo:</label>
+                            <input type="number" id="anioMax" name="anioMax" class="form-control text-white border-0 px-3 py-2" 
+                                   style="background-color: var(--fondo-terciario) !important; border-radius: 8px; font-size: 0.95rem;"
+                                   min="0" max="2100" value="2026" required />
+                        </div>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm px-4 py-2" 
+                                style="background-color: var(--acento-principal) !important; border: none; border-radius: 8px; font-weight: 600;">
+                            Aplicar Rango
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -31,5 +66,17 @@
 
 @section Scripts {
     <script src="~/js/autocompletadoBuscador.js" asp-append-version="true"></script>
+    <script>
+        function alternarFiltroAnio() {
+            const panelFiltroAnio = document.getElementById('panel-filtro-anio');
+            if (panelFiltroAnio) {
+                if (panelFiltroAnio.classList.contains('d-none')) {
+                    panelFiltroAnio.classList.remove('d-none');
+                } else {
+                    panelFiltroAnio.classList.add('d-none');
+                }
+            }
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 }
