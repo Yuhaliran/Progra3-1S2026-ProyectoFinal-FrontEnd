@@ -238,6 +238,55 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
             return View("ResultadosBusqueda", resultados);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> BuscarPorAnio(int? anioMin, int? anioMax)
+        {
+            var añoMínimo = anioMin ?? 1900;
+            var añoMáximo = anioMax ?? DateTime.Now.Year;
+
+            var resultadosBusqueda = new List<LibroResponse>();
+
+            try
+            {
+                var clienteApi = _httpClientFactory.CreateClient("XandriaAPI");
+                var tokenAcceso = Request.Cookies["JwtToken"];
+                if (!string.IsNullOrEmpty(tokenAcceso))
+                {
+                    clienteApi.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenAcceso);
+                }
+
+                var respuestaApi = await clienteApi.GetAsync("Libros/obtenerTodos");
+                if (respuestaApi.IsSuccessStatusCode)
+                {
+                    var contenidoRespuesta = await respuestaApi.Content.ReadAsStringAsync();
+                    var opcionesSerializacion = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var catalogoLibros = JsonSerializer.Deserialize<List<LibroResponse>>(contenidoRespuesta, opcionesSerializacion);
+
+                    if (catalogoLibros != null)
+                    {
+                        var arbolAnios = new ArbolAVL<int, LibroResponse>();
+
+                        foreach (var libroItem in catalogoLibros)
+                        {
+                            int claveAnio = libroItem.AnioPublicacion ?? 0;
+                            arbolAnios.Insertar(claveAnio, libroItem);
+                        }
+
+                        arbolAnios.ObtenerRango(añoMínimo, añoMáximo, resultadosBusqueda);
+
+                        resultadosBusqueda = resultadosBusqueda.OrderByDescending(x => x.AnioPublicacion).ToList();
+                    }
+                }
+            }
+            catch (Exception excepcionError)
+            {
+                _logger.LogError(excepcionError, "Error al filtrar libros por rango de años en el árbol AVL.");
+            }
+
+            ViewBag.Query = $"Años {añoMínimo} - {añoMáximo}";
+            return View("ResultadosBusqueda", resultadosBusqueda);
+        }
+
         private bool esISBN(string query)
         {
             if (string.IsNullOrEmpty(query)) return false;
