@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const inputBusqueda = document.getElementById('search-input');
-    const contenedorSugerencias = document.getElementById('search-suggestions');
+    const inputBusqueda = document.getElementById('input-busqueda');
+    const contenedorSugerencias = document.getElementById('sugerencias-busqueda');
 
     if (inputBusqueda && contenedorSugerencias) {
         let temporizadorDebounce;

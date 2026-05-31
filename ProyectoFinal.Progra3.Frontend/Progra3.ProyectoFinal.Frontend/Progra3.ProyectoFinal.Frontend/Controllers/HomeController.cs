@@ -201,7 +201,7 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
                     }
                     else
                     {
-                        var respuestaUnificada = await cliente.GetAsync($"Libros/palabraABuscar-unificado/{query}");
+                        var respuestaUnificada = await cliente.GetAsync($"Libros/buscar-unificado/{query}");
                         if (respuestaUnificada.IsSuccessStatusCode)
                         {
                             var contenido = await respuestaUnificada.Content.ReadAsStringAsync();
@@ -210,13 +210,14 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
                             if (libro != null)
                             {
                                 resultados.Add(libro);
+                                SugerenciasCache.Limpiar();
                             }
                         }
                     }
                 }
                 else
                 {
-                    var respuestaLocal = await cliente.GetAsync($"Libros/palabraABuscar-local?palabraABuscar={Uri.EscapeDataString(query)}");
+                    var respuestaLocal = await cliente.GetAsync($"Libros/buscar-local?query={Uri.EscapeDataString(query)}");
                     if (respuestaLocal.IsSuccessStatusCode)
                     {
                         var contenido = await respuestaLocal.Content.ReadAsStringAsync();
