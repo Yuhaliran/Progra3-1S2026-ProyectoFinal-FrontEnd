@@ -1,32 +1,13 @@
 @model Progra3.ProyectoFinal.Frontend.Util.ListaCircularDoble<Progra3.ProyectoFinal.Frontend.Models.Response.Libros.LibroResponse>
 
 @{
+    Layout = "_LayoutBuscador";
     ViewData["Title"] = "Principal";
-    var libros = Model?.ObtenerListaCompleta() ?? new List<Progra3.ProyectoFinal.Frontend.Models.Response.Libros.LibroResponse>();
+    var listaLibros = Model?.ObtenerListaCompleta() ?? new List<Progra3.ProyectoFinal.Frontend.Models.Response.Libros.LibroResponse>();
 }
 
-
-
 <div class="container my-5 contenido-principal">
-    
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-8 col-lg-6">
-            <form asp-controller="Home" asp-action="Buscar" method="get">
-                <div class="input-group shadow-lg" style="border-radius: 30px; overflow: hidden; border: 1px solid var(--color-borde);">
-                    <input type="text" name="query" class="form-control px-4 py-3 border-0 text-white" 
-                           placeholder="Buscar por Título, Autor o ISBN..." 
-                           style="background-color: var(--fondo-secundario) !important; color: var(--texto-principal) !important; font-size: 1.05rem;"
-                           required />
-                    <button type="submit" class="btn btn-primary px-4 d-flex align-items-center justify-content-center" 
-                            style="background-color: var(--acento-principal) !important; border: none; font-size: 1.25rem;">
-                        🔍
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    @if (libros.Count == 0)
+    @if (listaLibros.Count == 0)
     {
         <div class="text-center py-5 card shadow-sm p-5 border-0 rounded-4" style="background-color: var(--fondo-secundario);">
             <h2 class="display-6 fw-bold text-danger">Bienvenido a Xandria</h2>
@@ -48,38 +29,38 @@
                 </button>
                 
                 <div class="carrusel-lista" id="carrusel-lista-libros">
-                    @for (int i = 0; i < libros.Count; i++)
+                    @for (int indiceLibro = 0; indiceLibro < listaLibros.Count; indiceLibro++)
                     {
-                        var libro = libros[i];
-                        var imageSrc = "";
-                        if (!string.IsNullOrEmpty(libro.Portada))
+                        var libroItem = listaLibros[indiceLibro];
+                        var fuenteImagen = "";
+                        if (!string.IsNullOrEmpty(libroItem.Portada))
                         {
-                            if (libro.Portada.StartsWith("http") || libro.Portada.StartsWith("/") || libro.Portada.StartsWith("~"))
+                            if (libroItem.Portada.StartsWith("http") || libroItem.Portada.StartsWith("/") || libroItem.Portada.StartsWith("~"))
                             {
-                                imageSrc = libro.Portada;
+                                fuenteImagen = libroItem.Portada;
                             }
-                            else if (libro.Portada.Contains("base64,"))
+                            else if (libroItem.Portada.Contains("base64,"))
                             {
-                                imageSrc = libro.Portada;
+                                fuenteImagen = libroItem.Portada;
                             }
                             else
                             {
-                                imageSrc = "data:image/jpeg;base64," + libro.Portada;
+                                fuenteImagen = "data:image/jpeg;base64," + libroItem.Portada;
                             }
                         }
                         else
                         {
-                            imageSrc = "/images/Home-book.webp";
+                            fuenteImagen = "/images/Home-book.webp";
                         }
 
                         <div class="libro-item" 
-                             data-index="@i"
-                             data-titulo="@libro.Titulo"
-                             data-autor="@libro.Autor"
-                             data-isbn="@libro.ISBN"
-                             onclick="window.location.href='@Url.Action("DetallesLibro", "Home", new { isbn = libro.ISBN })'"
+                             data-index="@indiceLibro"
+                             data-titulo="@libroItem.Titulo"
+                             data-autor="@libroItem.Autor"
+                             data-isbn="@libroItem.ISBN"
+                             onclick="window.location.href='@Url.Action("DetallesLibro", "Home", new { isbn = libroItem.ISBN })'"
                              style="cursor: pointer;">
-                            <img src="@imageSrc" alt="@libro.Titulo" onerror="this.src='/images/Home-book.webp';">
+                            <img src="@fuenteImagen" alt="@libroItem.Titulo" onerror="this.src='/images/Home-book.webp';">
                         </div>
                     }
                 </div>

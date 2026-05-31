@@ -1,0 +1,35 @@
+@{
+    Layout = "_Layout";
+}
+
+<div class="container my-4">
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="position-relative">
+                <form asp-controller="Home" asp-action="Buscar" method="get">
+                    <div class="input-group shadow-lg" style="border-radius: 30px; overflow: hidden; border: 1px solid var(--color-borde);">
+                        <input type="text" id="search-input" name="query" class="form-control px-4 py-3 border-0 text-white" 
+                               placeholder="Buscar por Título, Autor o ISBN..." 
+                               style="background-color: var(--fondo-secundario) !important; color: var(--texto-principal) !important; font-size: 1.05rem;"
+                               autocomplete="off" required />
+                        <button type="submit" class="btn btn-primary px-4 d-flex align-items-center justify-content-center" 
+                                style="background-color: var(--acento-principal) !important; border: none; font-size: 1.25rem;">
+                            🔍
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="search-suggestions" class="dropdown-menu w-100 shadow-lg border-0 d-none mt-2 overflow-hidden" 
+                     style="background: rgba(31, 27, 24, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 16px; border: 1px solid var(--color-borde) !important; max-height: 380px; overflow-y: auto; z-index: 2000; position: absolute; top: 100%; left: 0;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @RenderBody()
+</div>
+
+@section Scripts {
+    <script src="~/js/autocompletadoBuscador.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+}

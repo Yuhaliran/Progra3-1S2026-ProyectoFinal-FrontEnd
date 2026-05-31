@@ -1,40 +1,25 @@
 @model IEnumerable<Progra3.ProyectoFinal.Frontend.Models.Response.Libros.LibroResponse>
 
 @{
+    Layout = "_LayoutBuscador";
     ViewData["Title"] = "Resultados de Búsqueda";
-    var query = ViewBag.Query as string ?? "";
-    var resultados = Model?.ToList() ?? new List<Progra3.ProyectoFinal.Frontend.Models.Response.Libros.LibroResponse>();
+    var terminoBusqueda = ViewBag.Query as string ?? "";
+    var listaResultados = Model?.ToList() ?? new List<Progra3.ProyectoFinal.Frontend.Models.Response.Libros.LibroResponse>();
 }
 
 <div class="container my-5 contenido-principal">
-    <div class="row align-items-center mb-5">
-        <div class="col-md-7">
+    <div class="row mb-5">
+        <div class="col-12">
             <h1 class="font-weight-bold" style="color: var(--texto-principal); font-weight: 800; font-size: 2.2rem;">
                 Resultados de Búsqueda
             </h1>
             <p class="text-muted">
-                Mostrando resultados para: <span class="badge px-3 py-2 text-uppercase" style="background-color: var(--fondo-terciario); color: var(--acento-hover); border: 1px solid var(--color-borde); font-size: 0.9rem; border-radius: 20px;">"@query"</span>
+                Mostrando resultados para: <span class="badge px-3 py-2 text-uppercase" style="background-color: var(--fondo-terciario); color: var(--acento-hover); border: 1px solid var(--color-borde); font-size: 0.9rem; border-radius: 20px;">"@terminoBusqueda"</span>
             </p>
-        </div>
-        
-        <div class="col-md-5">
-            <form asp-controller="Home" asp-action="Buscar" method="get">
-                <div class="input-group shadow-sm" style="border-radius: 30px; overflow: hidden; border: 1px solid var(--color-borde);">
-                    <input type="text" name="query" class="form-control px-4 py-2 border-0 text-white" 
-                           placeholder="Nueva búsqueda..." 
-                           value="@query"
-                           style="background-color: var(--fondo-secundario) !important; color: var(--texto-principal) !important;"
-                           required />
-                    <button type="submit" class="btn btn-primary px-3 d-flex align-items-center justify-content-center" 
-                            style="background-color: var(--acento-principal) !important; border: none;">
-                        🔍
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 
-    @if (resultados.Count == 0)
+    @if (listaResultados.Count == 0)
     {
         <div class="row justify-content-center py-5">
             <div class="col-md-8 text-center">
@@ -42,7 +27,7 @@
                     <span style="font-size: 5rem; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));" class="d-block mb-4">🔍❌</span>
                     <h3 class="font-weight-bold text-danger mb-2">No se encontraron libros</h3>
                     <p class="text-muted mb-4 max-width-500 mx-auto">
-                        No pudimos encontrar ninguna coincidencia para <strong style="color: var(--texto-principal);">"@query"</strong> en nuestro sistema local ni en repositorios externos unificados por ISBN.
+                        No pudimos encontrar ninguna coincidencia para <strong style="color: var(--texto-principal);">"@terminoBusqueda"</strong> en nuestro sistema local ni en repositorios externos unificados por ISBN.
                     </p>
                     
                     <div class="border-top pt-4 text-start max-width-500 mx-auto">
@@ -67,27 +52,27 @@
     else
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-            @foreach (var libro in resultados)
+            @foreach (var libroItem in listaResultados)
             {
-                var imageSrc = "";
-                if (!string.IsNullOrEmpty(libro.Portada))
+                var fuenteImagen = "";
+                if (!string.IsNullOrEmpty(libroItem.Portada))
                 {
-                    if (libro.Portada.StartsWith("http") || libro.Portada.StartsWith("/") || libro.Portada.StartsWith("~"))
+                    if (libroItem.Portada.StartsWith("http") || libroItem.Portada.StartsWith("/") || libroItem.Portada.StartsWith("~"))
                     {
-                        imageSrc = libro.Portada;
+                        fuenteImagen = libroItem.Portada;
                     }
-                    else if (libro.Portada.Contains("base64,"))
+                    else if (libroItem.Portada.Contains("base64,"))
                     {
-                        imageSrc = libro.Portada;
+                        fuenteImagen = libroItem.Portada;
                     }
                     else
                     {
-                        imageSrc = "data:image/jpeg;base64," + libro.Portada;
+                        fuenteImagen = "data:image/jpeg;base64," + libroItem.Portada;
                     }
                 }
                 else
                 {
-                    imageSrc = "/images/Home-book.webp";
+                    fuenteImagen = "/images/Home-book.webp";
                 }
 
                 <div class="col">
@@ -95,33 +80,33 @@
                          style="border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease; background-color: var(--fondo-secundario);">
                         
                         <div class="position-relative overflow-hidden bg-dark" style="height: 280px;">
-                            <img src="@imageSrc" class="card-img-top w-100 h-100" alt="@libro.Titulo" 
+                            <img src="@fuenteImagen" class="card-img-top w-100 h-100" alt="@libroItem.Titulo" 
                                  style="object-fit: cover; transition: transform 0.4s ease;"
                                  onerror="this.src='/images/Home-book.webp';">
                             
                             <span class="position-absolute top-3 start-3 badge text-uppercase py-1.5 px-2.5 shadow-sm" 
                                   style="top: 15px; left: 15px; background-color: rgba(20, 18, 16, 0.85); color: var(--texto-secundario); border: 1px solid var(--color-borde); border-radius: 8px; font-size: 0.75rem; font-weight: 600;">
-                                🔢 @libro.ISBN
+                                🔢 @libroItem.ISBN
                             </span>
                         </div>
 
                         <div class="card-body d-flex flex-column p-4">
                             <h5 class="card-title text-truncate-2 font-weight-bold mb-1" 
                                 style="color: var(--texto-principal); font-size: 1.15rem; font-weight: 700; min-height: 48px; line-height: 1.4;" 
-                                title="@libro.Titulo">
-                                @libro.Titulo
+                                title="@libroItem.Titulo">
+                                @libroItem.Titulo
                             </h5>
                             
                             <p class="card-text text-truncate text-muted mb-3 small" style="color: var(--texto-secundario) !important;">
-                                👤 @libro.Autor
+                                👤 @libroItem.Autor
                             </p>
                             
                             <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top" style="border-top-color: var(--color-borde) !important;">
                                 <span class="small text-muted">
-                                    📅 @(libro.AnioPublicacion.HasValue && libro.AnioPublicacion.Value > 0 ? libro.AnioPublicacion.Value.ToString() : "N/A")
+                                    📅 @(libroItem.AnioPublicacion.HasValue && libroItem.AnioPublicacion.Value > 0 ? libroItem.AnioPublicacion.Value.ToString() : "N/A")
                                 </span>
                                 
-                                <a asp-action="DetallesLibro" asp-route-isbn="@libro.ISBN" class="btn btn-primary btn-sm px-3 py-1.5" 
+                                <a asp-action="DetallesLibro" asp-route-isbn="@libroItem.ISBN" class="btn btn-primary btn-sm px-3 py-1.5" 
                                    style="border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
                                     Ver Detalles
                                 </a>
