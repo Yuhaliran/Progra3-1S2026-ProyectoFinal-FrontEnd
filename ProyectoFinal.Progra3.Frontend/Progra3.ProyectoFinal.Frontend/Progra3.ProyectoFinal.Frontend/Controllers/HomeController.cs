@@ -12,6 +12,7 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
+        private static readonly TablaHash<string, List<LibroResponse>> SugerenciasCache = new TablaHash<string, List<LibroResponse>>(256);
 
         public HomeController(ILogger<HomeController> _logger, IHttpClientFactory _httpClientFactory)
         {
@@ -186,7 +187,7 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
                     }
                     else
                     {
-                        var respuestaUnificada = await cliente.GetAsync($"Libros/buscar-unificado/{query}");
+                        var respuestaUnificada = await cliente.GetAsync($"Libros/palabraABuscar-unificado/{query}");
                         if (respuestaUnificada.IsSuccessStatusCode)
                         {
                             var contenido = await respuestaUnificada.Content.ReadAsStringAsync();
@@ -201,7 +202,7 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
                 }
                 else
                 {
-                    var respuestaLocal = await cliente.GetAsync($"Libros/buscar-local?query={Uri.EscapeDataString(query)}");
+                    var respuestaLocal = await cliente.GetAsync($"Libros/palabraABuscar-local?palabraABuscar={Uri.EscapeDataString(query)}");
                     if (respuestaLocal.IsSuccessStatusCode)
                     {
                         var contenido = await respuestaLocal.Content.ReadAsStringAsync();
@@ -352,10 +353,62 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error al eliminar el libro {isbn} de la cola de lectura.");
-                TempData["ErrorMessage"] = "Ocurrió un error al procesar tu solicitud.";
+            }
+            return RedirectToAction(nameof(MiColaDeLectura));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Sugerencias(string palabraABuscar)
+        {
+            if (string.IsNullOrEmpty(palabraABuscar) || palabraABuscar.Trim().Length < 1)
+            {
+                return Json(new List<LibroResponse>());
             }
 
-            return RedirectToAction(nameof(MiColaDeLectura));
+            string palabraBuscada = palabraABuscar.Trim().ToLower();
+
+            if (SugerenciasCache.Buscar(palabraBuscada, out List<LibroResponse>? valorCache) && valorCache != null)
+            {
+                return Json(valorCache);
+            }
+
+            var concordancias = new List<LibroResponse>();
+
+            try
+            {
+                var cliente = _httpClientFactory.CreateClient("XandriaAPI");
+                var token = Request.Cookies["JwtToken"];
+                if (!string.IsNullOrEmpty(token))
+                {
+                    cliente.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                }
+
+                var respuesta = await cliente.GetAsync("Libros/obtenerTodos");
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    var contenido = await respuesta.Content.ReadAsStringAsync();
+                    var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var todosLosLibros = JsonSerializer.Deserialize<List<LibroResponse>>(contenido, opciones);
+
+                    if (todosLosLibros != null)
+                    {
+                        concordancias = todosLosLibros
+                            .Where(x => x.Titulo.ToLower().Contains(palabraBuscada) || 
+                                        x.Autor.ToLower().Contains(palabraBuscada) || 
+                                        x.ISBN.ToLower().Contains(palabraBuscada))
+                            .Take(8)
+                            .ToList();
+                    }
+                }
+
+                SugerenciasCache.Insertar(palabraBuscada, concordancias);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al generar sugerencias de autocompletado.");
+            }
+
+            return Json(concordancias);
         }
 
         public IActionResult Privacy()
@@ -370,3 +423,16 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
