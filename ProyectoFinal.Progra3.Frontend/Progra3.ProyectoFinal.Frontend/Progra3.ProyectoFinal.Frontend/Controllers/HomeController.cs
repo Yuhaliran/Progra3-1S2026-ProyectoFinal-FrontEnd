@@ -73,7 +73,7 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
             try
             {
                 var cliente = _httpClientFactory.CreateClient("XandriaAPI");
-                
+
                 var token = Request.Cookies["JwtToken"];
                 if (!string.IsNullOrEmpty(token))
                 {
@@ -81,7 +81,7 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
                 }
 
                 var respuestaLibro = await cliente.GetAsync($"Libros/obtenerPorIsbn/{isbn}");
-                
+
                 if (respuestaLibro.IsSuccessStatusCode)
                 {
                     var contenidoLibro = await respuestaLibro.Content.ReadAsStringAsync();
@@ -91,7 +91,7 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
                     if (libro != null)
                     {
                         ViewBag.Libro = libro;
-                        
+
                         if (!string.IsNullOrEmpty(token))
                         {
                             var respuestaCola = await cliente.GetAsync($"ColaLectura/{isbn}");
@@ -101,7 +101,7 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
                                 var cola = JsonSerializer.Deserialize<Progra3.ProyectoFinal.Frontend.Models.Response.Bitacora.ColaLecturaResponse>(contenidoCola, opciones);
                                 ViewBag.ColaLectura = cola;
                             }
-                            
+
                             var respuestaEstados = await cliente.GetAsync($"ColaLectura/estados");
                             if (respuestaEstados.IsSuccessStatusCode)
                             {
@@ -110,6 +110,20 @@ namespace Progra3.ProyectoFinal.Frontend.Controllers
                                 ViewBag.Estados = estados;
                             }
                         }
+
+
+                        var respuestaGrafo = await cliente.GetAsync($"Libros/relacionados/{isbn}");
+                        if (respuestaGrafo.IsSuccessStatusCode)
+                        {
+                            var jsonRelacionados = await respuestaGrafo.Content.ReadAsStringAsync();
+                            var librosRelacionados = JsonSerializer.Deserialize<List<LibroResponse>>(jsonRelacionados, opciones);
+                            ViewBag.Relacionados = librosRelacionados;
+                        }
+                        else
+                        {
+                            ViewBag.Relacionados = new List<LibroResponse>();
+                        }
+                        
 
                         return View(libro);
                     }

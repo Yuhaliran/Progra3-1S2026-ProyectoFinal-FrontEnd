@@ -124,3 +124,37 @@
         </div>
     </div>
 </div>
+<hr style="border-color: #444; margin-top: 40px; margin-bottom: 20px;" />
+
+<h3 style="color: white; margin-bottom: 20px;">Libros Relacionados (Del mismo autor)</h3>
+
+<div class="row">
+    @if (ViewBag.Relacionados != null && ViewBag.Relacionados.Count > 0)
+    {
+        foreach (var relacionado in ViewBag.Relacionados)
+        {
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card h-100" style="background-color: #222; border: 1px solid #333;">
+                    <img src="@relacionado.Portada" class="card-img-top" alt="@relacionado.Titulo" style="height: 250px; object-fit: cover;">
+
+                    <div class="card-body text-center">
+                        <h6 class="card-title" style="color: white; font-weight: bold;">@relacionado.Titulo</h6>
+                        <p class="card-text" style="color: #bbb; font-size: 0.9em;">@relacionado.AnioPublicacion</p>
+
+                        <a href="@Url.Action("DetallesLibro", "Home", new { isbn = relacionado.ISBN })"
+                           class="btn btn-sm btn-outline-light w-100"
+                           style="border-color: #d85c27; color: #d85c27;">
+                            Ver Detalles
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <p style="color: #888;">No se encontraron libros relacionados en nuestra red.</p>
+        </div>
+    }
+</div>
